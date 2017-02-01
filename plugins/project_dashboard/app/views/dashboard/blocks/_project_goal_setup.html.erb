@@ -1,0 +1,56 @@
+
+<% project_dashboard_helper = Object.new.extend(DashboardHelper) %>
+<%= form_tag('/dashboard/project_goals', method: :post) do %>
+  <table style="width:50%;">
+    <tr>
+      <th>Goal Name</th>
+      <th> Active </th>
+      <th>Expected Goal(%)</th>
+      <th>Trackers</th>
+      <th>Statuses</th>
+    </tr>
+
+  <%# Dashboard.project_goals.each do |each_goal|%>
+  <% Dashboard.project_goals.each_with_index do |each_goal,index|%>
+  <% selected_tracker = ProjectGoal.where(:project_id => @project.id,:name => each_goal) %>
+  <% selected_trackers = selected_tracker[0]["trackers"].present? ? selected_tracker[0]["trackers"] : [""] rescue [""] %>
+  <% selected_statuses = selected_tracker[0]["statuses"].present? ? selected_tracker[0]["statuses"] : [""] rescue [""] %>
+  <tr>
+    <%= hidden_field_tag "project_id",@project.id %>
+
+    <td><%= project_dashboard_helper.get_goal_name(each_goal) %></td>
+    <td><%= check_box_tag "active[#{each_goal}]",'yes', project_dashboard_helper.get_goal_active(each_goal,@project) %></td>
+    <td><%= text_field_tag "expected_goal[#{each_goal}]",project_dashboard_helper.get_goal_value(each_goal,@project) %></td>
+    <% if index == 4 %>
+      <td></td>
+      <td></td>
+    <% else %>
+      <td><%= select_tag "trackers[#{each_goal}]", options_from_collection_for_select(Tracker.all, "id", "name",:selected =>selected_trackers),:multiple => true %></td>
+      <td><%= select_tag "statuses[#{each_goal}]", options_from_collection_for_select(IssueStatus.all, "id", "name",:selected =>selected_statuses),:multiple => true %></td>
+    <% end %>
+
+  </tr>
+  <% end %>
+
+
+
+</table>
+<div style="width:50%;float: left;">
+  <input name="commit" type="submit" value="Update Goals" style="
+  /*float: right;*/
+          margin-top: 20px;
+  ">
+</div>
+<% end %>
+
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        text-align: center
+    }
+    th, td {
+        padding: 15px;
+    }
+</style>

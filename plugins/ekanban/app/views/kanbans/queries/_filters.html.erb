@@ -1,0 +1,84 @@
+
+<%= javascript_tag do %>
+    var operatorLabels = <%= raw_json Query.operators_labels %>;
+    var operatorByType = <%= raw_json Query.operators_by_filter_type %>;
+    var availableFilters = <%= raw_json query.available_filters_as_json %>;
+    var labelDayPlural = <%= raw_json l(:label_day_plural) %>;
+    var allProjects = <%= raw_json query.all_projects_values %>;
+    $(document).ready(function(){
+    initFilters();
+    <% query.filters.each do |field, options| %>
+        addFilter("<%= field %>", <%= raw_json query.operator_for(field) %>, <%= raw_json query.values_for(field) %>);
+    <% end %>
+    });
+<% end %>
+
+<table style="width:100%">
+  <tr>
+    <td>
+      <table id="filters-table">
+      </table>
+    </td>
+    <td class="add-filter">
+      <%= label_tag('add_filter_select', l(:label_filter_add)) %>
+      <%= select_tag 'add_filter_select', filters_options_for_select(query), :name => nil %>
+    </td>
+  </tr>
+</table>
+<%= hidden_field_tag 'f[]', '' %>
+<% include_calendar_headers_tags %>
+
+
+<% dashboard_helper = Object.new.extend(DashboardHelper) %>
+<script>
+
+    $( document ).ready(function() {
+
+        if($('#filters-table .values #values_fixed_version_id_1').length > 0)         // use this if you are using id to check
+        {
+
+            $("#filters-table .values #values_fixed_version_id_1").next(".toggle-multiselect").after('<input type="checkbox" class="close_sprints" name="close_sprints" value="yes" checked="true" style="padding-left:8px;margin-left:8px">Hide closed sprints?')
+            var close_sprints=<%= dashboard_helper.get_closed_sprints(@project) %>;
+            console.log($(".close_sprints").checked)
+            if ($(".close_sprints").is(':checked')) {
+                $(document.getElementById('values_fixed_version_id_1').options).each(function(index, option) {
+
+                    if(close_sprints.includes(parseInt(option.value))) {
+                        option.hidden = true; // not fully compatible. option.style.display = 'none'; would be an alternative or $(option).hide();
+                    }
+                });
+            }
+            else
+            {
+                $(document.getElementById('values_fixed_version_id_1').options).each(function(index, option) {
+
+                    if(close_sprints.includes(parseInt(option.value))) {
+                        option.hidden = false; // not fully compatible. option.style.display = 'none'; would be an alternative or $(option).hide();
+                    }
+                });
+            }
+
+        }
+    });
+
+    $(document).on('change', '.close_sprints', function(event) {
+        var close_sprints=<%= dashboard_helper.get_closed_sprints(@project) %>;
+        if (this.checked) {
+            $(document.getElementById('values_fixed_version_id_1').options).each(function(index, option) {
+
+                if(close_sprints.includes(parseInt(option.value))) {
+                    option.hidden = true; // not fully compatible. option.style.display = 'none'; would be an alternative or $(option).hide();
+                }
+            });
+        }
+        else
+        {
+            $(document.getElementById('values_fixed_version_id_1').options).each(function(index, option) {
+
+                if(close_sprints.includes(parseInt(option.value))) {
+                    option.hidden = false; // not fully compatible. option.style.display = 'none'; would be an alternative or $(option).hide();
+                }
+            });
+        }
+    });
+</script>

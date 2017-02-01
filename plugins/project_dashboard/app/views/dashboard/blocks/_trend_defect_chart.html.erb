@@ -1,0 +1,9 @@
+<%= javascript_include_tag 'highcharts', :plugin => 'project_dashboard' %>
+<%  dashboard_helper = Object.new.extend(DashboardHelper) %>
+
+<h3>
+<%= link_to l(:label_trend_defect_chart),"#" %>
+</h3>
+
+<%= render :partial => 'dashboard/graphs/trend_defect_graph' %>
+

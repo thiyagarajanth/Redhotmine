@@ -1,0 +1,211 @@
+<div style="width:100%;float:left">
+<div id="resource_allocation_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<%#= @cats.join(',') rescue '' %>
+<div id="tooltip"></div>
+<div class="border" style="display:none;">
+    <table>
+        <tr><td><b>Summary:</b></td></tr>
+        <tr><td style="color:#7cb5ec">Billable Hrs:</td> <td> <%= @total_billable_hours%></td></tr>
+        <tr><td style="color:#434348">Available Hrs:</td><td><%= @total_available_hours %></td></tr>
+        <tr><td style="color:#3CB371">Allocated Hrs:</td><td><%= @total_allocated_hours%></td></tr>
+        <tr><td style="color:#f7a35c">Spent Hrs:</td><td><%= @total_spent_hours.round %></td></tr>
+        <tr><td style="color:#8085e9">PTO Hrs:</td><td><%= @total_pto_hours%></td></tr>
+        <tr><td style="color:#f15c80">Flexi Off Hrs:</td><td><%= @total_flexioff%></td>
+        </tr>
+    </table>
+</div>
+</div>
+
+<script>
+
+    console.log($("#tags_list").val());
+
+    var cats="<%= @cats.join(',') rescue '' %>";
+    var billable="<%= @billable.join(',') rescue '' %>";
+    var available="<%= @available_hours.join(',') rescue '' %>";
+    var allocated="<%= @allocated_hours.join(',') rescue ''%>";
+    var spent_hours="<%= @spent_hours.join(',') rescue ''%>";
+    var pto_hours="<%= @pto_hours.join(',') rescue ''%>";
+    var flexi_off="<%= @flexi_off.join(',') rescue ''%>";
+    var data = [7,12,16,32,64];
+    var dataSum = 0;
+    console.log(cats.length)
+    for (var i=0;i < billable.length;i++) {
+        dataSum += data[i]
+    }
+    $(function () {
+        
+        $('#resource_allocation_graph').highcharts({
+            chart: {
+                type: 'column',
+
+                // Edit chart spacing
+                spacingBottom: 15,
+                spacingTop: 10,
+                spacingLeft: -5,
+                spacingRight: 110,
+            
+            // Explicitly tell the width and height of a chart
+            },
+            title: {
+                text: 'Resource Utilization chart'
+            },
+
+            credits:{
+
+                enabled: false
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: cats.length > 0 ? cats.split(',') : 0
+            },
+            yAxis: {
+                min: 0,
+
+                title: {
+                    text: 'Utilization (Hrs)'
+                }
+
+            },
+        
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} Hrs</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+//                        formatter: function(){
+////                            return Highcharts.numberFormat(this.y,0);
+////                            return Highcharts.numberFormat(100 * this.y / this.x.total,0) + "%";
+//                            var pcnt = (this.value / dataSum) * 100;
+//                            return Highcharts.numberFormat(pcnt,0,',') + '%';
+//                        }
+                        formatter: function () {
+                            var mychart = $('#resource_allocation_graph').highcharts();
+                            var mytotal = 0;
+
+//                            for (i = 0; i < mychart.series.length; i++) {
+//                                if (mychart.series[i].visible) {
+//                                    mytotal=0
+//                                    mytotal += parseInt(mychart.series[0].yData[0]);
+//                                }
+//                            }
+//                            if (mychart.series[0].visible) {
+//                                mytotal = parseInt(mychart.series[0].yData[0]);
+//                            }
+                            mytotal =parseInt(mychart.series[0].yData[0]);
+                            console.log(billable.split(',')[0])
+                            var pcnt = (this.y / billable.split(',')[0]) * 100;
+                            if (!isFinite(pcnt)){ var dd = '0.0'}else{
+                                    var dd = pcnt}
+                            return Highcharts.numberFormat(dd) + '%';
+                                // }
+                            // }
+                            
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Billable',
+                data:  billable.length > 0 ? billable.split(',').map(Number) : 0
+
+            }, {
+                name: 'Available',
+                data:  available.length > 0 ? available.split(',').map(Number) : 0
+
+            }, {
+                name: 'Allocated',
+                data:  allocated.length > 0 ? allocated.split(',').map(Number) : 0
+
+            },
+                {
+                    name: 'Spent',
+                    data:  spent_hours.length > 0 ? spent_hours.split(',').map(Number) : 0
+
+                },
+                {
+                    name: 'PTO',
+                    data:  pto_hours.length > 0 ? pto_hours.split(',').map(Number) : 0
+
+                },
+                
+                {
+                    name: 'Flexi Off',
+                    data:  flexi_off.length > 0 ? flexi_off.split(',').map(Number) : 0
+
+                }]
+//            dataLabels: {
+//                enabled: true,
+//                rotation: -90,
+//                color: '#FFFFFF',
+//                align: 'right',
+//                format: '{point.y:.1f}', // one decimal
+//                y: 10, // 10 pixels down from the top
+//                style: {
+//                    fontSize: '13px',
+//                    fontFamily: 'Verdana, sans-serif'
+//                }
+//            }
+            
+        });
+        $('.border').show();
+   
+    });
+
+</script>
+
+
+<script>
+    $('.resource_allocation_settings_model').click(function (e) {
+        $('#ajax-modal').html('<%= escape_javascript(render :partial => 'dashboard/graphs/setting_modal') %>');
+        $('#block_id').attr("value","resource_allocation_chart")
+        $('.unmanagement_overdue_tasks').empty();
+        child =$('.resource_allocation_values').children().clone();
+        $('.unmanagement_overdue_tasks').append(child);
+        $("h3.title").text("Select Biilable or Shadow or Support");
+        showModal('ajax-modal', '450px');
+        return false;
+    });
+    $('.border').hide();
+    
+</script>
+<style>
+.border{
+  padding:6px;
+  margin-bottom: 10px;
+  background-color:#f6f6f6;
+  color:#505050;
+  line-height:1.5em;
+  border: 1px solid #e4e4e4;
+  word-wrap: break-word;
+  margin-top: -300px;
+    margin-left: 1156px;
+    float:right;
+    /*width: 10%;*/
+}
+.highcharts-background{
+    width:90%;
+    
+}
+#resource_allocation_graph{
+    width: 88%;
+    float:left;
+    
+}
+.border{
+    /*width:13%*/
+    float:left;
+}
+</style>

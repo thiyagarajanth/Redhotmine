@@ -1,0 +1,11 @@
+<div style="display:none">
+<%# template row used by the 'add row' button %>
+<table id="issueTemplate">
+<tbody>
+	<% @row = 0 %>
+    <% @log_projects = options_for_wktime_project(@logtime_projects) %>
+	<%= render :partial => 'edit_issues2', :locals => {:entry => nil, :isTemplate => true}%>
+	<%= render :partial => 'edit_hours', :locals => {:entry => nil, :isTemplate => true, :padAt => 'end', :padTill => 8}%>
+</tbody>
+</table>
+</div>

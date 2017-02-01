@@ -1,0 +1,59 @@
+
+<h3>
+  <%= link_to  l(:label_project_goal),"#" %>
+</h3>
+
+<% project_dashboard_helper = Object.new.extend(DashboardHelper) %>
+<% @available_golas= ProjectGoal.where(:project_id=>@project.id) %>
+
+
+<% if @available_golas && @available_golas.any? %>
+    <%= form_tag({}) do %>
+        <table class="list issues">
+          <thead><tr>
+
+            <th><%=l(:field_goal_name)%></th>
+            <th><%=l(:field_expected_goal)%></th>
+            <th><%=l(:field_achieved_goal)%></th>
+            <th><%=l(:field_goal_status)%></th>
+          </tr></thead>
+          <tbody>
+
+          <% for each_goal in @available_golas %>
+
+              <tr id="issue" class="hascontextmenu <%= cycle('odd', 'even') %> ">
+                <td><%= project_dashboard_helper.get_goal_name(each_goal.name) %></td>
+                <td><%= project_dashboard_helper.get_goal_value(each_goal.name,@project).round(2) %></td>
+                <td><%= project_dashboard_helper.get_achived_goal_value(each_goal.name,@project,@query).round(2) %></td>
+
+                <% if (each_goal.name=="efficient_varient" ||  each_goal.name=="resource_burndown") %>
+                <%#= 111111111111111 %>
+                    <td class="<%=  project_dashboard_helper.get_achived_goal_value(each_goal.name,@project,@query).abs <= each_goal.expected_goal ? "green" : "red"  %>"></td>
+                  <% else %>
+                    <td class="<%=  project_dashboard_helper.get_achived_goal_value(each_goal.name,@project,@query).abs >= each_goal.expected_goal ? "green" : "red"  %>"></td>
+
+              <% end %>
+              </tr>
+
+
+
+          <% end %>
+          </tbody>
+        </table>
+    <% end %>
+<% else %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+<% end %>
+
+
+
+
+<style>
+  .red{
+      background-color: red;
+  }
+  .green{
+      background-color: green;
+  }
+
+</style>

@@ -1,0 +1,124 @@
+<%  dashboard_helper = Object.new.extend(DashboardHelper) %>
+
+<% @sprint_name,@functional_internal_critical,@functional_client_critical,@technical_internal_critical,@technical_client_critical, @functional_internal_significant,@functional_client_significant,@technical_internal_significant,@technical_client_significant,@functional_internal_minor,@functional_client_minor,@technical_internal_minor,@technical_client_minor= dashboard_helper.get_trend_defect_chart(@project) %>
+<div id="trend_defect_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="tooltip"></div>
+
+<script>
+var sprint_name =   ("<%=@sprint_name.join(',') rescue '' %>")
+var functional_internal_critical = JSON.parse("<%= @functional_internal_critical.flatten.to_s.gsub('"', '')%>")
+var functional_client_critical = JSON.parse("<%= @functional_client_critical.flatten.to_s.gsub('"', '')%>")
+var technical_internal_critical = JSON.parse("<%= @technical_internal_critical.flatten.to_s.gsub('"', '')%>")
+var technical_client_critical = JSON.parse("<%= @technical_client_critical.flatten.to_s.gsub('"', '')%>")
+var technical_client_significant = JSON.parse("<%= @technical_client_significant.flatten.to_s.gsub('"', '')%>")
+var functional_internal_significant = JSON.parse("<%= @functional_internal_significant.flatten.to_s.gsub('"', '')%>")
+var functional_client_significant = JSON.parse("<%= @functional_client_significant.flatten.to_s.gsub('"', '')%>")
+var technical_internal_significant = JSON.parse("<%=@technical_internal_significant.flatten.to_s.gsub('"', '') %>")
+var technical_client_significant = JSON.parse("<%= @technical_client_significant.flatten.to_s.gsub('"', '')%>")
+var functional_internal_minor = JSON.parse("<%= @functional_internal_minor.flatten.to_s.gsub('"', '')%>")
+var functional_client_minor  =JSON.parse("<%= @functional_client_minor.flatten.to_s.gsub('"', '')%>")
+var technical_internal_minor = JSON.parse("<%= @technical_internal_minor.flatten.to_s.gsub('"', '')%>")
+var technical_client_minor = JSON.parse("<%= @technical_client_minor.flatten.to_s.gsub('"', '')%>")
+
+
+$(function () {
+    $('#trend_defect_graph').highcharts({
+
+        chart: {
+            type: 'column'
+        },
+
+        title: {
+            text: 'Defect Chart'
+        },
+        credits:{
+
+            enabled: false
+        },
+        subtitle: {
+            text: 'Bugs based on latest sprints'
+        },
+
+        xAxis: {
+            categories: sprint_name.length > 0 ? sprint_name.split(',') : 0
+        },
+
+        yAxis: {
+            title: {
+                text: 'Number of Bugs'
+            }
+        },
+
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.series.name + ' impact'+ ': ' + this.y + '<br/>' +
+                    'Total: ' + this.point.stackTotal;
+            }
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal'
+                
+            }
+        },
+
+        series: [{
+            name: 'Functional internal critical',
+            data: functional_internal_critical,
+            stack: 'functional_internal'
+        }, {
+            name: 'Functional internal significant',
+            data: functional_internal_significant,
+            stack: 'functional_internal'
+        }, {
+            name: 'Functional internal Minor',
+            data: functional_internal_minor,
+            stack: 'functional_internal'
+        }, {
+            name: 'Functional client critical',
+            data: functional_client_critical,
+            stack: 'functional_client'
+        }, {
+            name: 'Functional client significant',
+            data: functional_client_significant,
+            stack: 'functional_client'
+        },
+        {
+            name: 'Functional client Minor',
+            data: functional_client_minor,
+            stack: 'functional_client'
+        },
+         {
+            name: 'Technical internal critical',
+            data: technical_internal_critical,
+            stack: 'technical_internal'
+        }, {
+            name: 'Technical internal significant',
+            data: technical_internal_significant,
+            stack: 'technical_internal'
+        },
+        {
+            name: 'Technical internal Minor',
+            data: technical_internal_minor,
+            stack: 'technical_internal'
+        },
+         {
+            name: 'Technical client critical',
+            data: technical_client_critical,
+            stack: 'technical_client'
+        }, {
+            name: 'Technical client significant',
+            data: technical_client_significant,
+            stack: 'technical_client'
+        },
+        {
+            name: 'Technical client Minor',
+            data: technical_client_minor,
+            stack: 'technical_client'
+        }]
+    });
+});
+</script>   
+

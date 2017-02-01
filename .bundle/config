@@ -1,0 +1,4 @@
+---
+BUNDLE_WITHOUT: "xapian:xapain"
+BUNDLE_PATH: "vendor/bundle"
+BUNDLE_DISABLE_SHARED_GEMS: "true"

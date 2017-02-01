@@ -1,0 +1,58 @@
+
+    <%#= select_tag "user_billable", options_for_select(["Billable", "Non Billable" ], !member.billable.nil? ? member.billable==true ? "Billable" : "Non Billable" : "") ,include_blank: true,:member_id=>member.id,:disabled => true %>
+  <%#= select_tag "user_billable", options_for_select([["Billable",1],["Shadow",2],["Support",3]],member.billable.present?  && !member.billable != true || false ? [:billable,:shadow,:support].index(member.billable)+1 : ""),include_blank: true,:member_id=>member.id,:disabled => true %>
+
+<% billable_type = member.billable_type %>
+  <% h = Object.new.extend(EmployeeInfoHelper) %>
+  <% user_dept = h.get_user_department %>
+
+<td>
+<% if user_dept %>
+
+  <%= select_tag "user_billable", options_for_select([["Billable",1],["Shadow",2],["Support",3]],member.billable.present?  ? ([:billable,:shadow,:support].index(member.billable).to_i )+1 : ""),include_blank: true,:member_id=>member.id, :billable_admin=> true, :class => 'user_billable_options' %>
+
+<%else%>
+  <%= select_tag "user_billable", options_for_select([["Billable",1],["Shadow",2],["Support",3]],member.billable.present?  ? ([:billable,:shadow,:support].index(member.billable).to_i  )+1 : ""),include_blank: true,:member_id=>member.id,:disabled => true, :billbale_admin=> false ,:class => 'user_billable_options'  %>
+<%end%>
+  <%= hidden_field_tag 'billable_status', member.billable_type,:id=>"member_billable_status",:member_id=>member.id,:billable_status=>member.billable_type %>
+
+</td>
+
+
+<td>
+<div class="member-<%=member.id%>-capacity" id="member_capacity">
+
+    <div>
+
+    <input type="hidden" id="member_id" value="<%= member.id  %>" member_id="<%=member.id %>">
+    <input type="hidden" id="current_capacity" value="<%=  Member.current_project_capacity(member) %>" member_id="<%=member.id %>">
+    <input type="hidden" id="available_capacity" value="<%=   Member.available_capacity(member) %>%" member_id="<%=member.id %>">
+    <input type="hidden" id="selected_capacity" value="" member_id="<%=member.id %>">
+    <input type="hidden" id="other_capacity" value="<%=  Member.other_capacity(member) %>" member_id="<%=member.id %>">
+
+    <!--<div id="donut_single" style="width: 150px; height: 150px;"></div>-->
+
+  </div>
+  <!--<label for="amount">Used:</label>-->
+  <div id="capacity_chart_<%=member.id %>" ></div>
+   <div id="div_member_capacity_slider" style="display:none"></div>
+  <%= hidden_field_tag 'member_capacity', member.capacity,:member_id=>member.id %>
+</div>
+
+</td>
+
+
+
+
+
+    <script type="text/javascript">
+        $('.user_billable_options').attr('disabled','disabled')
+        $('.icon-edit').click(function(){
+            $(this).closest('tr').find('#div_member_capacity_slider').slider('disable')
+            if ($(this).closest('tr').find('#user_billable').attr('billable_admin')=='true'){
+                $(this).closest('tr').find('#user_billable').attr('disabled', false)
+                $(this).closest('tr').find('#div_member_capacity_slider').slider('enable')
+            }
+        })
+
+    </script>

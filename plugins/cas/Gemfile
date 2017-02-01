@@ -1,0 +1,2 @@
+gem 'rubycas-client',:path=>"plugins/cas/lib/rubycas-client"
+

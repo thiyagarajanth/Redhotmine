@@ -1,0 +1,36 @@
+production:
+  adapter: mysql2
+  database:  iniaDec
+  server:  localhost #vm1033
+  host:  localhost
+  port:  3306
+  username:  root
+  password:  root
+  encoding: utf8
+development:
+  adapter: mysql2
+  database:  iniaDec
+  server:  localhost #vm1033
+  host:  localhost
+  port:  3306
+  username:  root
+  password:  root
+  encoding: utf8
+test:
+  adapter: mysql2
+  database:  nanba2
+  host:  192.168.4.74
+  username:  root
+  password:  root
+  encoding: utf8
+
+
+  
+hrms_user_sync:
+  adapter_sync: mysql2
+  database_sync: hrms #hrms_qc
+  host_sync: 192.168.4.83 #192.168.8.241
+  port_sync: 3306
+  username_sync: root #hrms_user
+  password_sync: #hrmspass!23!
+  encoding: utf8

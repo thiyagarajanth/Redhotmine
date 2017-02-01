@@ -1,0 +1,79 @@
+#red, #div_member_capacity_slider, #blue {
+    float: left;
+    clear: left;
+    width: 150px;
+    margin: 6px;
+    background: #808080;
+}
+
+#div_member_capacity_slider .ui-slider-range { background: #006600; }
+#div_member_capacity_slider .ui-slider-handle { border-color: #006600; }
+
+.task_doneratio_slide
+{
+    margin: 5px;
+    width: 50%;
+    float: left;
+}
+
+
+tr.odd rect  {
+    fill: #f6f7f8 !important;
+}
+
+tr.even rect {
+    fill: #fff !important;
+}
+
+
+tr:hover rect  {
+    fill: #ffffdd !important;
+}
+
+
+form.new_membership p:first-of-type{
+    margin-top: 10% !important;
+}
+form.new_membership .block1{
+    float:left;
+}
+form.new_membership .block2{
+    float:right;
+    margin-right: 13%;
+}
+
+form.edit_membership p:first-of-type{
+    margin-top: 10% !important;
+}
+form.edit_membership .block1{
+    float:left;
+}
+form.edit_membership .block2{
+    float:right;
+    margin-right: 13%;
+}
+
+
+/* avatar css */
+
+.gravatar { transition: all .2s ease-in-out; }
+
+.gravatar:hover {
+    transform: scale(2.0);
+    /*transform-origin: top left;*/
+    transform-origin: 0% 40%;
+    position: relative;
+    z-index: 2;
+}
+
+td.assigned-to .gravatar:hover {
+    transform: scale(5.0) !important;
+
+}
+
+table.list{
+    margin-bottom: 38px !important;
+}
+.journal h4 img.gravatar{
+    margin: 20px 4px -4px 0 !important;
+}

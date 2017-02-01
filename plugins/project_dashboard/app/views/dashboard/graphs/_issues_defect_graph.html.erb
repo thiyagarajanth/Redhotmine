@@ -1,0 +1,102 @@
+<%  dashboard_helper = Object.new.extend(DashboardHelper) %>
+<% @priorities,@bug_classifications = dashboard_helper.get_defect_chart(@query,@project) %>
+<%#= @priorities.inspect %>
+<div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+<% @priorities && @priorities.each do |each_pr| %>
+    <%= hidden_field_tag "test",nil,name: each_pr[:name],data: each_pr[:data].join(','),stack: each_pr[:stack],class: "priority" %>
+
+    <% end %>
+
+
+<script>
+    var array = [];
+    array = "<%= @priorities %>";
+var clasification_values = '<%= @bug_classifications.join(',') %>'
+var data_values = '<%= @priorities %>'
+//var my_objects =JSON.parse('#{raw(data_values.to_json)}');
+console.log(data_values);
+
+
+
+        jsonObj = [];
+        $("input[class=priority]").each(function() {
+
+            var name = $(this).attr("name");
+            var data = $(this).attr("data");
+            var stack = $(this).attr("stack");
+
+            item = {}
+            item ["name"] = name;
+            item ["data"] = data.split(',').map(function (x) {
+                return parseInt(x, 10);
+            });;
+            item ["stack"] = stack;
+
+            jsonObj.push(item);
+        });
+
+        console.log(jsonObj);
+
+
+
+
+    $(function () {
+        $('#container').highcharts({
+
+            chart: {
+                type: 'column'
+            },
+
+            title: {
+                text: 'Total Number of Issues'
+            },
+            credits:{
+                enabled: false
+             },
+            xAxis: {
+                offset:-41,
+                labels:{
+                    y:40
+                },
+                categories: clasification_values.split(',')
+            },
+
+            yAxis: {
+                allowDecimals: false,
+                min: -1.9,
+                startOnTick:false,
+                title: {
+                    text: 'Number of Issues'
+                },
+                stackLabels: {
+                    verticalAlign:"bottom",
+                    y:20,
+                    enabled: true,
+                    formatter: function() {
+                        return  this.stack;
+                    }
+                }
+            },
+
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.x +'</b><br/>'+
+                            this.series.name +': '+ this.y +'<br/>'+
+                            'Total: '+ this.point.stackTotal;
+                }
+            },
+
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+
+            series: jsonObj
+        });
+    });
+
+
+
+</script>
+

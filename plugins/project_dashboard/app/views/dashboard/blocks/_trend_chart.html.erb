@@ -1,0 +1,22 @@
+<%  dashboard_helper = Object.new.extend(DashboardHelper) %>
+<%= javascript_include_tag 'highcharts', :plugin => 'project_dashboard' %>
+<h3>
+<%= link_to l(:label_trend_chart),"#" %>
+<% if controller.action_name =='page_layout' %>
+      <%= link_to image_tag("settings.png" , :plugin => 'project_dashboard', :border=>0),'#', :class => 'velocity_settings_model' %>
+  <% end %>
+</h3>
+<%= params[:velocity_select] %>
+<% @setting_velocity_trackers,@setting_velocity_statuses=dashboard_helper.get_selected__trackers_and_statuses(@project.id,'velocity_chart') %>
+<%= javascript_include_tag 'highcharts', :plugin => 'project_dashboard' %>
+<% result = dashboard_helper.trend_chart_stories(@project.id,@setting_velocity_statuses) %>
+<% @stories = result[0] %>
+<% @sprint_name = result[1] %>
+<% @story_points = result[2] %>
+<% @closed_stories_count = result[3] %>
+<% @closed_stories_point = result[4] %>
+<%= render :partial => 'dashboard/graphs/trend_graph' %>
+
+<div class="velocity_graph_values" style="display:none">
+<!-- <p><label for="velocity_graph_selection" ><%= l(:lable_select_status) %></label><span class="required">*</span><%= select_tag "status_id", options_for_select(IssueStatus.all.map{|x|[x.name,x.id]},:selected =>@setting_velocity_statuses),:multiple => true,prompt: " Select Type" %></p> -->
+<p><label for="status_selection" id="status_select"><%= l(:lable_select_status) %></label> <span class="required">*</span>  <%= select_tag "status_id", options_from_collection_for_select(IssueStatus.all, "id", "name",:selected =>@setting_velocity_statuses),:multiple => true %></p></div>

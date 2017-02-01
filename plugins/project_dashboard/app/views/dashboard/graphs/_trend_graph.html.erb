@@ -1,0 +1,94 @@
+<div id="trend_graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="tooltip"></div>
+
+<script>
+var sprint_name = "<%=@sprint_name.join(',') rescue '' %>"
+console.log(sprint_name)
+var story = "<%= @stories%>"
+var stories = JSON.parse(story)
+console.log(stories)
+var story_point = "<%= @story_points.map {|e| e ? e : 0}%>"
+story_point2 = JSON.parse(story_point)
+console.log(story_point2)
+var x = sprint_name.length > 0 ? sprint_name.split(',') : 0
+var closed_stories_count = JSON.parse("<%= @closed_stories_count%>")
+var closed_stories_point = JSON.parse("<%= @closed_stories_point.map {|e| e ? e : 0}%>")
+console.log(closed_stories_point)
+$(function () {
+    $('#trend_graph').highcharts({
+    
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Velocity Chart'
+        },
+        credits:{
+
+            enabled: false
+        },
+        subtitle: {
+            text: 'Stories & Points based on latest sprints'
+        },
+        xAxis: {
+            categories: x,
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'No. of Story points'
+            }
+        },
+        tooltip: {
+            useHTML: true,  
+            positioner: function(boxWidth, boxHeight, point) {         
+            return {x:point.plotX + 20,y:point.plotY};         
+        },
+            formatter: function(){
+                var index = this.point.index
+
+                var comment = stories[index]
+                return 'Stories:' + ' ' + comment
+            }
+            
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0,
+                dataLabels: {
+                     enabled: true,
+
+                    formatter: function() {
+                        return (this.y) +' ' + 'points'
+                    }
+                }
+            }
+        }, 
+
+        series: [{ 
+            name: 'Planned',
+            data: story_point2,
+            color: ' #7cb5ec'
+        }, {
+            name: "Achieved",
+            data: closed_stories_point,
+            color: 'brown'
+        }
+        ]
+    });
+});
+</script>   
+<script>
+    $('.velocity_settings_model').click(function(){
+        $('#ajax-modal').html("<%= escape_javascript(render :partial => 'dashboard/graphs/setting_modal')%>");
+        $('#block_id').attr("value","velocity_chart")
+        $('.unmanagement_overdue_tasks').empty();
+        child = $('.velocity_graph_values').children().clone();
+        $("h3.title").text("Select Status");
+        $('.unmanagement_overdue_tasks').append(child);
+        showModal('ajax-modal', '450px');
+        return false;
+    });
+</script>

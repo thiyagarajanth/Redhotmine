@@ -1,0 +1,19 @@
+// <%#= @issue %>
+
+if($("#popupWindow #popupWindowBody form.edit_issue").length > 0)
+{
+    $("#popupWindow #popupWindowBody form.edit_issue").remove();
+    $("#popupWindow #popupWindowBody").html("<%= escape_javascript(render('kanbans/issues/edit', layout: false, content_type: 'text/javascript')) %>");
+}
+else
+{
+    $("#popupWindow #popupWindowBody").html("<%= escape_javascript(render('kanbans/issues/edit')) %>");
+}
+
+
+$('select#issue_status_id').val("<%= @issue_status_id %>");
+$('select#kanban_state_id').val("<%= @kanban_status_id %>");
+$('#kanban_pane_id').val("<%= @kanban_pane_id %>");
+//$(".edit_issue #issue_status_id").prop( "disabled", true );
+//$(".edit_issue #kanban_state_id").prop( "disabled", true );
+
